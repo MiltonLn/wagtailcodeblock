@@ -32,14 +32,16 @@ function populate_target_code(label) {
                 </li>
                 {% if child.block.label == "Language" %}
                     {# As we loop through, load each language dialect #}
+                    {% comment %}
                     {% for language_choice, language_name in child.block.field.choices %}
                         {% if language_choice|length %}
                             <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/{{ prism_version }}/components/prism-{{ language_choice }}.min.js"></script>
                         {% endif %}
                     {% endfor %}
+                    {% endcomment %}
 
                     <script>
-                        $(document).ready(function() {
+                        $(window).load(function() {
                             // Set initial language class on load
                             target_class = '#target-element-{{ child.id_for_label }}'.replace('language', 'code');
                             {% if child.id_for_label|length %}
@@ -48,16 +50,23 @@ function populate_target_code(label) {
 
                             // Change language being highlighted when dropdown is changed
                             $('#{{ child.id_for_label }}').bind('input propertychange', function() {
-                                language_class = 'language-' + $('#{{ child.id_for_label }}').val();
-                                $(target_class).removeClass().addClass(language_class);
-                                prism_repaint(target_class);
+                                language_class = $('#{{ child.id_for_label }}').val();
+                                $.getScript('https://cdnjs.cloudflare.com/ajax/libs/prism/{{ prism_version }}/components/prism-' + language_class + '.min.js')
+                                    .done(function( script, textStatus ) {
+                                        $(target_class).removeClass().addClass('language' + language_class);
+                                        prism_repaint(target_class);
+                                        console.log( textStatus );
+                                      })
+                                      .fail(function( jqxhr, settings, exception ) {
+                                        $( "div.log" ).text( "Triggered ajaxError handler." );
+                                    });
                             });
                         });
                     </script>
                 {% endif %}
                 {% if child.block.label == "Code" %}
                     <script>
-                        $(document).ready(function() {
+                        $(window).load(function() {
                             populate_target_code('{{ child.id_for_label }}');
 
                             $('#{{ child.id_for_label }}').bind('input propertychange', function() {

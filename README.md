@@ -1,6 +1,6 @@
 # Wagtail Code Block
 
-A just started work-in-progress of a Streamfield block for source code with real-time syntax highlighting.
+A work-in-progress alpha of a Wagtail Streamfield block for source code with real-time syntax highlighting.
 
 It uses the excellent [PrismJS](http://prismjs.com/) library both in Wagtail Admin and the website.
 
